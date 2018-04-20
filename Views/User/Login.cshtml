@@ -1,0 +1,28 @@
+@model dojo_activities.Models.LoginViewModel
+
+<h3>Login</h3>
+<form asp-controller="User" asp-action="Login" method="post">
+    <table class="table" id="borderless2">
+        <tr>
+            <td><label asp-for="Email"></label></td>
+            <td><input asp-for="Email"/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="error"><span asp-validation-for="Email"></span><p class="error">@TempData["email_exists"]</p></td>
+        </tr>
+        <tr>
+            <td><label asp-for="Password"></label></td>
+            <td><input asp-for="Password"/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td class="error"><span asp-validation-for="Password"></span></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button type="submit">Login</button></td>
+        </tr>
+    </table>
+</form>
+<h5><a href="/">Need to Register?</a></h5>

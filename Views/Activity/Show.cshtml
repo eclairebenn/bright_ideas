@@ -1,0 +1,22 @@
+<h2>@ViewBag.Event.Title</h2>
+<div class="details">
+    <h3>
+        Event Coordinator : @ViewBag.Event.User.FirstName
+        @if(@ViewBag.Event.UserId == @ViewBag.User.Id)
+        {
+            <span><a href="/delete/@ViewBag.Event.EventId">Delete</a></span>                
+        }
+        else
+        {
+            <span><a href="/join/@ViewBag.Event.EventId">Join</a></span>
+        }
+    </h3>
+    <h3>Description</h3>
+    <h4>@ViewBag.Event.Description</h4>
+
+    <h3>Participants : </h3>
+    @foreach(Participant part in @ViewBag.Event.Participants)
+    {
+        <h3>@part.User.FirstName</h3>
+    }
+</div>
