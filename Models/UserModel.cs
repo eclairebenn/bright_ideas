@@ -11,12 +11,12 @@ namespace dojo_activities.Models
         public string LastName {get;set;}
         public DateTime CreatedAt {get;set;}
         public DateTime UpdatedAt {get;set;}
-        public List<Event> Events {get;set;}
+        public List<Meet> Meets {get;set;}
         public List<Participant> Participating {get;set;}
         
         public User()
         {
-            Events = new List<Event>();
+            Meets = new List<Meet>();
             Participating = new List<Participant>();
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;

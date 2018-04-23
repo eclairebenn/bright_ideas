@@ -6,12 +6,55 @@
         <th>Activity</th>
         <th>Date and Time</th>
         <th>Duration</th>
-        <th>Event Coordinator</th>
+        <th>Meet Coordinator</th>
         <th>Number of Participants</th>
         <th>Actions</th>
     </tr>
+    @foreach(Meet meet in @ViewBag.AllMeets)
+    {
+        <tr>
+            <td><a href="/activity/@meet.MeetId">@meet.Title</a></td>
+            <td>@meet.Date.ToString("MMM dd yyyy") @meet.Date.ToString("h:mm tt")</td>
+            <td>
+                @if(@meet.Duration.Days >= 1)
+                {
+                    <span>@meet.Duration.Days Days</span>
+                }
+                else if(@meet.Duration.Hours >= 1)
+                {
+                    <span>@meet.Duration.Hours Hours</span>
+                }
+                else
+                {
+                    <span>@meet.Duration.Minutes Minutes</span>
+                }
+            </td>
+            <td>@meet.User.FirstName @meet.User.LastName</td>
+            <td>@meet.Participants.Count</td>
+            <td>
+            @if(@meet.User.Id == @ViewBag.User.Id)
+            {
+                <span><a href="/delete/@meet.MeetId">Delete</a></span>
+            }
+            else if(@meet.Participants.Exists(u => u.UserId == @ViewBag.User.Id))
+            {
+                <span><a href="/leave/@meet.MeetId">Leave</a></span>
+            }
+            else
+            {
+                <span><a href="/join/@meet.MeetId">Join</a></span>
+            }
+            </td>
+        </tr>
+    }
 </table>
-
+@if(@ViewBag.JoinError != null)
+{
+    @foreach(String error in @ViewBag.JoinError)
+    {
+        <p>@error</p>
+    }    
+}
 
 
 <form action="/New">

@@ -32,12 +32,20 @@ namespace dojo_activities.Controllers
 
 
         [HttpGet]
-        [Route("")]
+        [Route("log/reg")]
 
+        public async Task<IActionResult> Home()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("")]
         public async Task<IActionResult> Index()
         {
             await _signInManager.SignOutAsync();
-            return View("Register");
+            return View("Home");
         }
 
         [HttpPost]
@@ -63,14 +71,6 @@ namespace dojo_activities.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        [Route("login")]
-
-        public async Task<IActionResult> DisplayLogin()
-        {
-            await _signInManager.SignOutAsync();
-            return View("Login");
-        }
 
         [HttpPost]
         [Route("user/login")]
@@ -90,6 +90,14 @@ namespace dojo_activities.Controllers
                 }            
             }
             return View(model);
+        }
+
+        [HttpGet]
+        [Route("logout")]
+        public async Task<IActionResult> LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Home");
         }
 
         private Task<User> GetCurrentUserAsync()

@@ -20,34 +20,30 @@ namespace dojo_activities.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
-            modelBuilder.Entity("dojo_activities.Models.Event", b =>
+            modelBuilder.Entity("dojo_activities.Models.Meet", b =>
                 {
-                    b.Property<int>("EventId")
+                    b.Property<int>("MeetId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<string>("Description")
-                        .IsRequired();
+                    b.Property<string>("Description");
 
                     b.Property<TimeSpan>("Duration");
 
-                    b.Property<DateTime>("Time");
-
-                    b.Property<string>("Title")
-                        .IsRequired();
+                    b.Property<string>("Title");
 
                     b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("UserId");
 
-                    b.HasKey("EventId");
+                    b.HasKey("MeetId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("events");
+                    b.ToTable("Meets");
                 });
 
             modelBuilder.Entity("dojo_activities.Models.Participant", b =>
@@ -57,7 +53,7 @@ namespace dojo_activities.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<int>("EventId");
+                    b.Property<int>("MeetId");
 
                     b.Property<DateTime>("UpdatedAt");
 
@@ -65,7 +61,7 @@ namespace dojo_activities.Migrations
 
                     b.HasKey("ParticipantId");
 
-                    b.HasIndex("EventId");
+                    b.HasIndex("MeetId");
 
                     b.HasIndex("UserId");
 
@@ -237,18 +233,18 @@ namespace dojo_activities.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("dojo_activities.Models.Event", b =>
+            modelBuilder.Entity("dojo_activities.Models.Meet", b =>
                 {
                     b.HasOne("dojo_activities.Models.User", "User")
-                        .WithMany("Events")
+                        .WithMany("Meets")
                         .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("dojo_activities.Models.Participant", b =>
                 {
-                    b.HasOne("dojo_activities.Models.Event", "Event")
+                    b.HasOne("dojo_activities.Models.Meet", "Meet")
                         .WithMany("Participants")
-                        .HasForeignKey("EventId")
+                        .HasForeignKey("MeetId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("dojo_activities.Models.User", "User")

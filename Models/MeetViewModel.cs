@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace dojo_activities.Models
 {
-    public class Event : BaseEntity
+    public class MeetViewModel : BaseEntity
     {
-        public int EventId {get;set;}
+        public int MeetId {get;set;}
 
         [Required]
         [MinLength(2)]
@@ -26,12 +26,12 @@ namespace dojo_activities.Models
         public DateTime Time {get;set;}
 
         [Required]
-        public TimeSpan Duration {get;set;}
+        public int Duration {get;set;}
         public string UserId { get; set; }
         public User User { get; set; }
         public List<Participant> Participants {get;set;}
 
-        public Event()
+        public MeetViewModel()
         {
             Participants = new List<Participant>();
 

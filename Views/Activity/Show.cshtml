@@ -1,22 +1,33 @@
-<h2>@ViewBag.Event.Title</h2>
-<div class="details">
-    <h3>
-        Event Coordinator : @ViewBag.Event.User.FirstName
-        @if(@ViewBag.Event.UserId == @ViewBag.User.Id)
-        {
-            <span><a href="/delete/@ViewBag.Event.EventId">Delete</a></span>                
-        }
-        else
-        {
-            <span><a href="/join/@ViewBag.Event.EventId">Join</a></span>
-        }
-    </h3>
-    <h3>Description</h3>
-    <h4>@ViewBag.Event.Description</h4>
+@foreach(Meet meet in @ViewBag.Meet)
+{
+    <h2>@meet.Title</h2>
+    <div class="details">
+        <h3>Meet Coordinator : @meet.User.FirstName
+            @if(@meet.UserId == @ViewBag.User.Id)
+            {
+                <span class="actionshow"><a href="/delete/@meet.MeetId">Delete</a></span>                
+            }
+            else if(@meet.Participants.Exists(u => u.UserId == @ViewBag.User.Id))
+            {
+                <span class="actionshow"><a href="/leave/@meet.MeetId">Leave</a></span>
+            }
+            else
+            {
+                <span class="actionshow"><a href="/join/@meet.MeetId">Join</a></span>
+            }        
+        </h3>
 
-    <h3>Participants : </h3>
-    @foreach(Participant part in @ViewBag.Event.Participants)
-    {
-        <h3>@part.User.FirstName</h3>
-    }
-</div>
+        
+        <h3>Description</h3>
+        <h4>@meet.Description</h4>
+
+        <h3>Participants : </h3>
+        <div class="parts">
+            @foreach(Participant part in @meet.Participants)
+            {
+                <h3>@part.User.FirstName</h3>
+            }        
+        </div>
+
+    </div>    
+}

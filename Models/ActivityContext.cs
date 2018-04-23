@@ -8,7 +8,7 @@ namespace dojo_activities.Models
         public ActivityContext(DbContextOptions<ActivityContext> options) : base(options) { }
 
         public DbSet<User> users { get; set; }
-        public DbSet<Event> events {get;set;}
+        public DbSet<Meet> Meets {get;set;}
         public DbSet<Participant> participants {get;set;}
 
     }

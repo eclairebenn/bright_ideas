@@ -33,3 +33,38 @@
         display: none;
     }
 }
+
+#table td{
+    padding: 20px;
+}
+#table th{
+    padding: 20px;
+}
+
+.addMeet input{
+    display: block;
+    margin-top: 20px;
+}
+
+.addMeet label{
+    margin-top: 20px;
+}
+
+.details{
+    margin-left: 40px;
+}
+
+.actionshow{
+    margin-left: 200px;
+}
+
+.parts{
+    margin-left: 30px;
+}
+
+#borderless td{
+    border: none;
+}
+#borderless2 td{
+    border: none;
+}

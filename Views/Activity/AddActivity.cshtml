@@ -1,6 +1,6 @@
-@model dojo_activities.Models.Event
+@model dojo_activities.Models.MeetViewModel
 
-<form asp-controller="Activity" asp-action="Add" method="post">
+<form class="addMeet" asp-controller="Activity" asp-action="Add" method="post">
     <div>
         <label asp-for="Title"></label>
         <input asp-for="Title"/>
@@ -12,8 +12,13 @@
         <input asp-for="Time"/>
         <span asp-validation-for="Time"></span>
         <label asp-for="Duration"></label>
-        <input asp-for="Duration"/>
-        <span asp-validation-for="Duration"></span>        
+        <input type="number" asp-for="Duration"/>
+        <span asp-validation-for="Duration"></span>
+        <select name="DurType">
+            <option value="day">Days</option>
+            <option value="hour">Hours</option>
+            <option value="minute">Minutes</option>
+        </select>       
     </div>
     <div>
         <label asp-for="Description"></label>

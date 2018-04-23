@@ -8,8 +8,8 @@ namespace dojo_activities.Models
         public int ParticipantId {get;set;}
         public string UserId { get; set; }
         public User User { get; set; }
-        public int EventId {get;set;}
-        public Event Event {get;set;}
+        public int MeetId {get;set;}
+        public Meet Meet {get;set;}
 
 
         public Participant()

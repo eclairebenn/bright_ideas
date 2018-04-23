@@ -35,11 +35,24 @@ namespace dojo_activities.Controllers
         public IActionResult Index()
         {
             User CurrentUser = GetCurrentUserAsync().Result;
-            List<Event> Events = _context.events.Include(user => user.User).Include(p => p.Participants).ToList();
-            ViewBag.AllEvents = Events;
+            List<Meet> Meets = _context.Meets.Include(user => user.User).Include(p => p.Participants).ToList();
+            foreach(Meet meet in Meets)
+            {
+                if(meet.Date.Add(meet.Duration) < DateTime.Now)
+                {
+                    _context.Meets.Remove(meet);
+                    _context.SaveChanges();
+                }
+            }
+            List<Meet> AllMeets = _context.Meets.Include(user => user.User).Include(p => p.Participants).ToList(); 
+            ViewBag.Register = new RegisterViewModel();
+            ViewBag.Login = new LoginViewModel();
+            ViewBag.AllMeets = AllMeets;
             ViewBag.User = CurrentUser;
-            return View("Home");
+            ViewBag.JoinError = TempData["JoinError"];
+            return View("Index");
         }
+
 
         [HttpGet]
         [Route("New")]
@@ -50,7 +63,7 @@ namespace dojo_activities.Controllers
 
         [HttpPost]
         [Route("add")]
-        public IActionResult Add(Event model)
+        public IActionResult Add(MeetViewModel model, string DurType)
         {
             if(ModelState.IsValid)
             {
@@ -63,56 +76,103 @@ namespace dojo_activities.Controllers
                 }
                 else
                 {
-                    model.UserId = GetCurrentUserAsync().Result.Id;
-                    _context.events.Add(model);
+                    TimeSpan duration = new TimeSpan();
+                    if(DurType == "day")
+                    {
+                        duration = new TimeSpan((int)model.Duration, 0, 0, 0);
+                    }
+                    else if(DurType == "hour")
+                    {
+                        duration = new TimeSpan(0, (int)model.Duration, 0, 0);
+                    }
+                    else
+                    {
+                        duration = new TimeSpan(0, 0, (int)model.Duration, 0);
+                    }
+                    DateTime dateValue = new DateTime(model.Date.Year, model.Date.Month, model.Date.Day, model.Time.Hour, model.Time.Minute, model.Time.Second);
+                    Meet NewMeet = new Meet 
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        Date = dateValue,
+                        Duration = duration,
+                        UserId = GetCurrentUserAsync().Result.Id,
+                    };
+
+                    _context.Meets.Add(NewMeet);
                     _context.SaveChanges();
-                    return Redirect($"/activity/{model.EventId}");
+                    return Redirect($"/activity/{NewMeet.MeetId}");
                 }
             }
             return View("AddActivity");
         }
 
         [HttpGet]
-        [Route("activity/{EventId}")]
-        public IActionResult Show(int EventId)
+        [Route("activity/{MeetId}")]
+        public IActionResult Show(int MeetId)
         {
-            Event Event = _context.events.Include(user => user.User).Include(p => p.Participants).ThenInclude(u => u.User).SingleOrDefault(e => e.EventId == EventId);
-            ViewBag.Event = Event;
+            List<Meet> Meet = _context.Meets.Include(user => user.User).Include(p => p.Participants).ThenInclude(u => u.User).Where(e => e.MeetId == MeetId).ToList();
+            ViewBag.Meet = Meet;
             User CurrUser = GetCurrentUserAsync().Result;
             ViewBag.User = CurrUser;
-            if(Event.Participants.Exists(u => u.UserId == CurrUser.Id))
-            {
-                System.Console.WriteLine("yes");
-            }
-            else
-            {
-                System.Console.WriteLine("no");
-            }
             return View("Show");
         }
 
         [HttpGet]
-        [Route("delete/{EventId}")]
-        public IActionResult Delete(int EventId)
+        [Route("delete/{MeetId}")]
+        public IActionResult Delete(int MeetId)
         {
-            Event remove = _context.events.SingleOrDefault(e => e.EventId == EventId);
-            _context.events.Remove(remove);
+            Meet remove = _context.Meets.SingleOrDefault(e => e.MeetId == MeetId);
+            _context.Meets.Remove(remove);
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        [Route("join/{EventId}")]
-        public IActionResult Join(int EventId)
+        [Route("join/{MeetId}")]
+        public IActionResult Join(int MeetId)
         {
             User CurrUser = GetCurrentUserAsync().Result;
-            Event join = _context.events.SingleOrDefault(e => e.EventId == EventId);
+            List<Participant> CurrPart = _context.participants.Include(m => m.Meet).Where(p => p.UserId == CurrUser.Id).ToList();
+            Meet join = _context.Meets.SingleOrDefault(e => e.MeetId == MeetId);
+            DateTime joinStart = join.Date;
+            DateTime joinEnd = join.Date.Add(join.Duration);
+            List<string> JoinError = new List<string>();
+            foreach(Participant part in CurrPart)
+            {
+                DateTime partStart = part.Meet.Date;
+                DateTime partEnd = part.Meet.Date.Add(part.Meet.Duration);
+                if(joinStart >= partStart && joinStart <= partEnd)
+                {
+                    JoinError.Add($"There is a conflict with event {part.Meet.Title}");
+                }
+                else if(joinEnd >= partStart && joinEnd <= partEnd)
+                {
+                    JoinError.Add($"There is a conflict with event {part.Meet.Title}");
+                }
+            }
+            if(JoinError.Count > 0)
+            {
+                TempData["JoinError"] = JoinError;
+                return RedirectToAction("Index");
+            }
             Participant newParticipant = new Participant
             {
                 UserId = CurrUser.Id,
-                EventId = join.EventId
+                MeetId = join.MeetId
             };
             _context.participants.Add(newParticipant);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("leave/{MeetId}")]
+        public IActionResult Leave(int MeetId)
+        {
+            User CurrUser = GetCurrentUserAsync().Result;
+            Participant remove = _context.participants.SingleOrDefault(e => e.MeetId == MeetId && e.UserId == CurrUser.Id);
+            _context.participants.Remove(remove);
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
