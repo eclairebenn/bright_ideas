@@ -122,7 +122,12 @@ namespace dojo_activities.Controllers
         [Route("delete/{MeetId}")]
         public IActionResult Delete(int MeetId)
         {
+            
             Meet remove = _context.Meets.SingleOrDefault(e => e.MeetId == MeetId);
+            if(GetCurrentUserAsync().Result.Id != remove.UserId)
+            {
+                return RedirectToAction("Index");
+            }
             _context.Meets.Remove(remove);
             _context.SaveChanges();
             return RedirectToAction("Index");
