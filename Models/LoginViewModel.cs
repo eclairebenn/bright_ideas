@@ -5,14 +5,16 @@ namespace dojo_activities.Models
 {
     public class LoginViewModel : BaseEntity
     {
-        [Required]
+        [Required(ErrorMessage = "Email is required")]
         [EmailAddress]
-        public string Email {get;set;}
+        [Display(Name="Email")]
+        public string LogEmail {get;set;}
 
         [Required(ErrorMessage="Invalid Password")]
         [DataType(DataType.Password)]
+        [Display(Name="Password")]
         
-        public string Password {get;set;}
+        public string LogPassword {get;set;}
 
     }
 }

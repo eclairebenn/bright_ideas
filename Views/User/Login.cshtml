@@ -4,20 +4,20 @@
 <form asp-controller="User" asp-action="Login" method="post">
     <table class="table" id="borderless2">
         <tr>
-            <td><label asp-for="Email"></label></td>
-            <td><input asp-for="Email"/></td>
+            <td><label asp-for="LogEmail"></label></td>
+            <td><input asp-for="LogEmail"/></td>
         </tr>
         <tr>
             <td></td>
-            <td class="error"><span asp-validation-for="Email"></span><p class="error">@TempData["email_exists"]</p></td>
+            <td class="error"><span asp-validation-for="LogEmail"></span><p class="error">@TempData["email_exists"]</p></td>
         </tr>
         <tr>
-            <td><label asp-for="Password"></label></td>
-            <td><input asp-for="Password"/></td>
+            <td><label asp-for="LogPassword"></label></td>
+            <td><input asp-for="LogPassword"/></td>
         </tr>
         <tr>
             <td></td>
-            <td class="error"><span asp-validation-for="Password"></span></td>
+            <td class="error"><span asp-validation-for="LogPassword"></span></td>
         </tr>
         <tr>
             <td></td>

@@ -10,8 +10,8 @@ using System;
 
 namespace dojo_activities.Migrations
 {
-    [DbContext(typeof(ActivityContext))]
-    partial class ActivityContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(BeltContext))]
+    partial class BeltContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

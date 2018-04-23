@@ -32,9 +32,9 @@ namespace dojo_activities
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ActivityContext>(options => options.UseNpgsql(Configuration["DBInfo:ConnectionString"]));
+            services.AddDbContext<BeltContext>(options => options.UseNpgsql(Configuration["DBInfo:ConnectionString"]));
 
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ActivityContext>().AddDefaultTokenProviders();
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<BeltContext>().AddDefaultTokenProviders();
             
             services.Configure<IdentityOptions>(options =>
             {
@@ -52,7 +52,7 @@ namespace dojo_activities
             {
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-                options.LoginPath = "/login";
+                options.LoginPath = "/";
                 options.AccessDeniedPath = "/home";
                 options.SlidingExpiration = true;
             }); 

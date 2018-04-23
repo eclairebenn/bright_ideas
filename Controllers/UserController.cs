@@ -14,12 +14,12 @@ namespace dojo_activities.Controllers
     [AllowAnonymous]
     public class UserController : Controller
     {
-        private ActivityContext _context;
+        private BeltContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserController(
-            ActivityContext context,
+            BeltContext context,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<User> signInManager)
@@ -68,7 +68,7 @@ namespace dojo_activities.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-            return View(model);
+            return View("Home", model);
         }
 
 
@@ -78,10 +78,10 @@ namespace dojo_activities.Controllers
         {
             if(ModelState.IsValid)
             {
-                User returnUser = await _userManager.FindByEmailAsync(model.Email);      
+                User returnUser = await _userManager.FindByEmailAsync(model.LogEmail);      
                 if(returnUser != null)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(returnUser, model.Password, isPersistent: false, lockoutOnFailure: false);
+                    var result = await _signInManager.PasswordSignInAsync(returnUser, model.LogPassword, isPersistent: false, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
                         return RedirectToAction("Index", "Activity");
@@ -89,7 +89,7 @@ namespace dojo_activities.Controllers
 
                 }            
             }
-            return View(model);
+            return View("Home", model);
         }
 
         [HttpGet]

@@ -16,11 +16,11 @@ namespace dojo_activities.Controllers
     [Authorize]
     public class ActivityController : Controller
     {
-        private ActivityContext _context;
+        private BeltContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         public ActivityController(
-            ActivityContext context,
+            BeltContext context,
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {

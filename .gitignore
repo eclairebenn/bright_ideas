@@ -3,4 +3,3 @@ obj/
 .vscode/
 vscode/
 bin/
-migrations/
