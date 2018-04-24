@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using dojo_activities.Models;
+using bright_ideas.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
-namespace dojo_activities
+namespace bright_ideas
 {
     public class Startup
     {
@@ -32,9 +32,9 @@ namespace dojo_activities
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BeltContext>(options => options.UseNpgsql(Configuration["DBInfo:ConnectionString"]));
+            services.AddDbContext<BIdeaContext>(options => options.UseNpgsql(Configuration["DBInfo:ConnectionString"]));
 
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<BeltContext>().AddDefaultTokenProviders();
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<BIdeaContext>().AddDefaultTokenProviders();
             
             services.Configure<IdentityOptions>(options =>
             {

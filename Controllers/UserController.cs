@@ -5,21 +5,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using dojo_activities.Models;
+using bright_ideas.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
-namespace dojo_activities.Controllers
+namespace bright_ideas.Controllers
 {
     [AllowAnonymous]
     public class UserController : Controller
     {
-        private BeltContext _context;
+        private BIdeaContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserController(
-            BeltContext context,
+            BIdeaContext context,
             UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<User> signInManager)
@@ -54,19 +54,21 @@ namespace dojo_activities.Controllers
         {
             if(ModelState.IsValid)
             {
-                User NewUser = new User { UserName = model.FirstName, FirstName = model.FirstName, LastName = model.LastName, Email = model.Email };
+                User NewUser = new User { UserName = model.Alias, Name = model.Name, Email = model.Email };
                 IdentityResult result = await _userManager.CreateAsync(NewUser, model.Password);
 
                 if(result.Succeeded)
                 {
                     await _signInManager.SignInAsync(NewUser, isPersistent: false);
-                    return RedirectToAction("Index", "Activity");
+                    return RedirectToAction("Index", "Idea");
                 }
-
+                List<string> passErrors = new List<string>();
                 foreach( var error in result.Errors )
                 {
+                    passErrors.Add(error.Description);
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                ViewBag.passErrors = passErrors;
             }
             return View("Home", model);
         }
@@ -84,9 +86,17 @@ namespace dojo_activities.Controllers
                     var result = await _signInManager.PasswordSignInAsync(returnUser, model.LogPassword, isPersistent: false, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Index", "Activity");
+                        return RedirectToAction("Index", "Idea");
+                    }
+                    else
+                    {
+                        ViewBag.PassError = "Incorrect password";
                     }
 
+                }
+                else
+                {
+                    ViewBag.EmailError = "That email has not been registered";
                 }            
             }
             return View("Home", model);

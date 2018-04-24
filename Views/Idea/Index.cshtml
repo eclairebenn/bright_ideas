@@ -1,62 +1,47 @@
-﻿
-<h1>Dojo Activity Center</h1>
+﻿@model bright_ideas.Models.Idea
 
-<table id="table" class="table-striped">
-    <tr>
-        <th>Activity</th>
-        <th>Date and Time</th>
-        <th>Duration</th>
-        <th>Meet Coordinator</th>
-        <th>Number of Participants</th>
-        <th>Actions</th>
-    </tr>
-    @foreach(Meet meet in @ViewBag.AllMeets)
+<h3>Welcome, @ViewBag.User.UserName</h3>
+
+<form asp-controller="Idea" asp-action="AddIdea" method="post">
+    <input class="ideaInput" asp-for="IdeaText" placeholder="Post something witty here..."/>
+    <input type="submit" value="Idea!">
+</form>    
+
+@if(@ViewBag.Error != null)
+    {
+        <span>@ViewBag.Error</span>        
+    }
+<table>
+    @foreach(Idea idea in @ViewBag.AllIdeas)
     {
         <tr>
-            <td><a href="/activity/@meet.MeetId">@meet.Title</a></td>
-            <td>@meet.Date.ToString("MMM dd yyyy") @meet.Date.ToString("h:mm tt")</td>
-            <td>
-                @if(@meet.Duration.Days >= 1)
-                {
-                    <span>@meet.Duration.Days Days</span>
-                }
-                else if(@meet.Duration.Hours >= 1)
-                {
-                    <span>@meet.Duration.Hours Hours</span>
-                }
-                else
-                {
-                    <span>@meet.Duration.Minutes Minutes</span>
-                }
+            <td class="nameidea">
+                <h4><a href="/users/@idea.User.Id">@idea.User.UserName</a> says : </h4>
             </td>
-            <td>@meet.User.FirstName @meet.User.LastName</td>
-            <td>@meet.Participants.Count</td>
             <td>
-            @if(@meet.User.Id == @ViewBag.User.Id)
-            {
-                <span><a href="/delete/@meet.MeetId">Delete</a></span>
-            }
-            else if(@meet.Participants.Exists(u => u.UserId == @ViewBag.User.Id))
-            {
-                <span><a href="/leave/@meet.MeetId">Leave</a></span>
-            }
-            else
-            {
-                <span><a href="/join/@meet.MeetId">Join</a></span>
-            }
-            </td>
+                <div class="ideaText">
+                    <h5>@idea.IdeaText</h5>
+                </div>
+                @if(@ViewBag.User.Id == @idea.UserId)
+                {
+                    <form class="delete" action="/delete/@idea.IdeaId" method="post">
+                        <button type="submit">X</button>
+                    </form>
+                }
+                <h5>
+                    <a class="like" href="/like/@idea.IdeaId">Like</a>
+                    @if(@idea.Likes.Count == 1)
+                    {
+                        <span><a href="/bright_ideas/@idea.IdeaId">@idea.Likes.Count person</a> likes this.</span>
+                    }
+                    else
+                    {
+                        <span><a href="/bright_ideas/@idea.IdeaId">@idea.Likes.Count people</a> like this.</span>
+                    }
+                </h5>
+            </td>    
         </tr>
-    }
+    }  
 </table>
-@if(@ViewBag.JoinError != null)
-{
-    @foreach(String error in @ViewBag.JoinError)
-    {
-        <p>@error</p>
-    }    
-}
 
 
-<form action="/New">
-    <input type="submit" value="Add an Activity">
-</form>

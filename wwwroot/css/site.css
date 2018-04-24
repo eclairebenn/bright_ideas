@@ -68,3 +68,59 @@
 #borderless2 td{
     border: none;
 }
+
+.col-sm-5{
+    border: 1px solid black;
+    margin: 15px;
+    padding: 10px;
+
+}
+
+.ideaInput{
+    width: 600px;
+    margin-left: 50px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.ideaText{
+    border: black 1px solid;
+    display: inline-block;
+    padding: 10px;
+    width: 300px;
+}
+
+.nameidea{
+    float: right;
+    padding-right: 15px;
+}
+
+.nameidea h4{
+    display: inline-block;
+    margin-left: 50px;
+}
+
+.delete{
+    display: inline-block;
+}
+div{
+    display: inline-block;
+}
+
+.like{
+    margin-right: 25px;
+}
+
+.outer{
+    display: block;
+}
+
+.space{
+    height: 75px;
+}
+
+.listlike{
+    margin-top: 20px;
+    margin-left: 30px;
+    display: block;
+}

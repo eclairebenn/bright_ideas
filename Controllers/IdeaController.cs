@@ -5,22 +5,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using dojo_activities.Models;
+using bright_ideas.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace dojo_activities.Controllers
+namespace bright_ideas.Controllers
 {
     [Authorize]
     public class IdeaController : Controller
     {
-        private BeltContext _context;
+        private BIdeaContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         public IdeaController(
-            BeltContext context,
+            BIdeaContext context,
             UserManager<User> userManager,
             SignInManager<User> signInManager)
         {
@@ -31,157 +31,86 @@ namespace dojo_activities.Controllers
 
 
         [HttpGet]
-        [Route("home")]
+        [Route("bright_ideas")]
         public IActionResult Index()
         {
-            User CurrentUser = GetCurrentUserAsync().Result;
-            List<Meet> Meets = _context.Meets.Include(user => user.User).Include(p => p.Participants).ToList();
-            foreach(Meet meet in Meets)
-            {
-                if(meet.Date.Add(meet.Duration) < DateTime.Now)
-                {
-                    _context.Meets.Remove(meet);
-                    _context.SaveChanges();
-                }
-            }
-            List<Meet> AllMeets = _context.Meets.Include(user => user.User).Include(p => p.Participants).ToList(); 
-            ViewBag.Register = new RegisterViewModel();
-            ViewBag.Login = new LoginViewModel();
-            ViewBag.AllMeets = AllMeets;
-            ViewBag.User = CurrentUser;
-            ViewBag.JoinError = TempData["JoinError"];
+            User CurrUser = GetCurrentUserAsync().Result;
+            IEnumerable<Idea> AllIdeas = _context.ideas.Include(u => u.User).Include(l => l.Likes).ThenInclude(lu => lu.User);
+            ViewBag.User = CurrUser;
+            ViewBag.Error = TempData["idea_error"];
+            List<Idea> sortIdeas = AllIdeas.OrderByDescending(i => i.Likes.Count).ToList();
+            ViewBag.AllIdeas = sortIdeas;
+            
             return View("Index");
-        }
-
-
-        [HttpGet]
-        [Route("New")]
-        public IActionResult New()
-        {
-            return View("AddActivity");
         }
 
         [HttpPost]
         [Route("add")]
-        public IActionResult Add(MeetViewModel model, string DurType)
+        public IActionResult AddIdea(Idea model)
         {
             if(ModelState.IsValid)
             {
-                ValidationContext val = new ValidationContext(model);
-                var result = model.Validate(val);
-                if(result.Count() > 0)
-                {
-                    TempData["error"] = result.FirstOrDefault().ErrorMessage;
-                    return RedirectToAction("New");
-                }
-                else
-                {
-                    TimeSpan duration = new TimeSpan();
-                    if(DurType == "day")
-                    {
-                        duration = new TimeSpan((int)model.Duration, 0, 0, 0);
-                    }
-                    else if(DurType == "hour")
-                    {
-                        duration = new TimeSpan(0, (int)model.Duration, 0, 0);
-                    }
-                    else
-                    {
-                        duration = new TimeSpan(0, 0, (int)model.Duration, 0);
-                    }
-                    DateTime dateValue = new DateTime(model.Date.Year, model.Date.Month, model.Date.Day, model.Time.Hour, model.Time.Minute, model.Time.Second);
-                    Meet NewMeet = new Meet 
-                    {
-                        Title = model.Title,
-                        Description = model.Description,
-                        Date = dateValue,
-                        Duration = duration,
-                        UserId = GetCurrentUserAsync().Result.Id,
-                    };
-
-                    _context.Meets.Add(NewMeet);
-                    _context.SaveChanges();
-                    return Redirect($"/activity/{NewMeet.MeetId}");
-                }
+                model.UserId = GetCurrentUserAsync().Result.Id;
+                _context.ideas.Add(model);
+                _context.SaveChanges(); 
             }
-            return View("AddActivity");
-        }
-
-        [HttpGet]
-        [Route("activity/{MeetId}")]
-        public IActionResult Show(int MeetId)
-        {
-            List<Meet> Meet = _context.Meets.Include(user => user.User).Include(p => p.Participants).ThenInclude(u => u.User).Where(e => e.MeetId == MeetId).ToList();
-            ViewBag.Meet = Meet;
-            User CurrUser = GetCurrentUserAsync().Result;
-            ViewBag.User = CurrUser;
-            return View("Show");
-        }
-
-        [HttpGet]
-        [Route("delete/{MeetId}")]
-        public IActionResult Delete(int MeetId)
-        {
-            
-            Meet remove = _context.Meets.SingleOrDefault(e => e.MeetId == MeetId);
-            if(GetCurrentUserAsync().Result.Id != remove.UserId)
+            else
             {
-                return RedirectToAction("Index");
+                TempData["idea_error"] = "Idea must be a length of at least 10 characters.";
             }
-            _context.Meets.Remove(remove);
-            _context.SaveChanges();
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        [Route("join/{MeetId}")]
-        public IActionResult Join(int MeetId)
+        [Route("like/{IdeaId}")]
+        public IActionResult Like(int IdeaId)
         {
-            User CurrUser = GetCurrentUserAsync().Result;
-            List<Participant> CurrPart = _context.participants.Include(m => m.Meet).Where(p => p.UserId == CurrUser.Id).ToList();
-            Meet join = _context.Meets.SingleOrDefault(e => e.MeetId == MeetId);
-            DateTime joinStart = join.Date;
-            DateTime joinEnd = join.Date.Add(join.Duration);
-            List<string> JoinError = new List<string>();
-            foreach(Participant part in CurrPart)
+            Like newLike = new Like
             {
-                DateTime partStart = part.Meet.Date;
-                DateTime partEnd = part.Meet.Date.Add(part.Meet.Duration);
-                if(joinStart >= partStart && joinStart <= partEnd)
-                {
-                    JoinError.Add($"There is a conflict with event {part.Meet.Title}");
-                }
-                else if(joinEnd >= partStart && joinEnd <= partEnd)
-                {
-                    JoinError.Add($"There is a conflict with event {part.Meet.Title}");
-                }
-            }
-            if(JoinError.Count > 0)
-            {
-                TempData["JoinError"] = JoinError;
-                return RedirectToAction("Index");
-            }
-            Participant newParticipant = new Participant
-            {
-                UserId = CurrUser.Id,
-                MeetId = join.MeetId
+                UserId = GetCurrentUserAsync().Result.Id,
+                IdeaId = IdeaId,
             };
-            _context.participants.Add(newParticipant);
+
+            _context.likes.Add(newLike);
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        [Route("leave/{MeetId}")]
-        public IActionResult Leave(int MeetId)
+        [Route("bright_ideas/{IdeaId}")]
+        public IActionResult Show(int IdeaId)
         {
-            User CurrUser = GetCurrentUserAsync().Result;
-            Participant remove = _context.participants.SingleOrDefault(e => e.MeetId == MeetId && e.UserId == CurrUser.Id);
-            _context.participants.Remove(remove);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
+            Idea Idea = _context.ideas.Include(u => u.User).SingleOrDefault(i => i.IdeaId == IdeaId);
+            List<Like> Likes = _context.likes.Where(i => i.IdeaId == IdeaId).Include(u => u.User).ToList();
+            
+            IEnumerable<Like> NonDupLikes = Likes.Distinct(new LikeComparer());
+            ViewBag.Idea = Idea;
+            ViewBag.Likes = NonDupLikes;
+            return View();
         }
 
+        [HttpGet]
+        [Route("users/{UserId}")]
+        public IActionResult DisplayUser(string UserId)
+        {
+            User user = _context.users.Include(i => i.Ideas).Include(l => l.Likes).SingleOrDefault(u => u.Id == UserId);
+            @ViewBag.User = user;
+            return View("DisplayUser");
+        }
+
+        [HttpPost]
+        [Route("delete/{IdeaId}")]
+        public IActionResult DeleteIdea(int IdeaId)
+        {
+            Idea IdeaDelete = _context.ideas.SingleOrDefault(i => i.IdeaId == IdeaId);
+            if(GetCurrentUserAsync().Result.Id == IdeaDelete.UserId)
+            {
+                _context.ideas.Remove(IdeaDelete);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+        
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
@@ -192,4 +121,6 @@ namespace dojo_activities.Controllers
             return _userManager.GetUserAsync(HttpContext.User);
         }
     }
+
+
 }

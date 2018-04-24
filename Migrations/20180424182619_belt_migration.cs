@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace dojo_activities.Migrations
 {
-    public partial class MigrationFirst : Migration
+    public partial class belt_migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -33,10 +33,9 @@ namespace dojo_activities.Migrations
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(nullable: false),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     PasswordHash = table.Column<string>(nullable: true),
@@ -159,24 +158,21 @@ namespace dojo_activities.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Meets",
+                name: "ideas",
                 columns: table => new
                 {
-                    MeetId = table.Column<int>(nullable: false)
+                    IdeaId = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    Date = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    Duration = table.Column<TimeSpan>(nullable: false),
-                    Title = table.Column<string>(nullable: true),
+                    IdeaText = table.Column<string>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Meets", x => x.MeetId);
+                    table.PrimaryKey("PK_ideas", x => x.IdeaId);
                     table.ForeignKey(
-                        name: "FK_Meets_AspNetUsers_UserId",
+                        name: "FK_ideas_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -184,27 +180,27 @@ namespace dojo_activities.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "participants",
+                name: "likes",
                 columns: table => new
                 {
-                    ParticipantId = table.Column<int>(nullable: false)
+                    LikeId = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    MeetId = table.Column<int>(nullable: false),
+                    IdeaId = table.Column<int>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_participants", x => x.ParticipantId);
+                    table.PrimaryKey("PK_likes", x => x.LikeId);
                     table.ForeignKey(
-                        name: "FK_participants_Meets_MeetId",
-                        column: x => x.MeetId,
-                        principalTable: "Meets",
-                        principalColumn: "MeetId",
+                        name: "FK_likes_ideas_IdeaId",
+                        column: x => x.IdeaId,
+                        principalTable: "ideas",
+                        principalColumn: "IdeaId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_participants_AspNetUsers_UserId",
+                        name: "FK_likes_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -249,18 +245,18 @@ namespace dojo_activities.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Meets_UserId",
-                table: "Meets",
+                name: "IX_ideas_UserId",
+                table: "ideas",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_participants_MeetId",
-                table: "participants",
-                column: "MeetId");
+                name: "IX_likes_IdeaId",
+                table: "likes",
+                column: "IdeaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_participants_UserId",
-                table: "participants",
+                name: "IX_likes_UserId",
+                table: "likes",
                 column: "UserId");
         }
 
@@ -282,13 +278,13 @@ namespace dojo_activities.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "participants");
+                name: "likes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Meets");
+                name: "ideas");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

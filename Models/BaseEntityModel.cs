@@ -1,6 +1,6 @@
 using System;
 
-namespace dojo_activities.Models
+namespace bright_ideas.Models
 {
     public abstract class BaseEntity 
     {

@@ -2,24 +2,21 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace dojo_activities.Models
+namespace bright_ideas.Models
 {
     public class RegisterViewModel : BaseEntity
     {
 
         [Required]
         [MinLength(2)]
-        [RegularExpression(@"^[a-zA-Z]+$", 
-         ErrorMessage = "First name can only contain letters")]
-        [Display(Name = "First Name")]
-        public string FirstName {get; set;}
+        [Display(Name = "Name")]
+        public string Name {get; set;}
 
         [Required]
         [MinLength(2)]
-        [RegularExpression(@"^[a-zA-Z]+$", 
-         ErrorMessage = "Last name can only contain letters")]
-        [Display(Name = "Last Name")]
-        public string LastName {get; set;}
+        [Display(Name = "Alias")]
+        public string Alias {get; set;}
+
 
         [Required]
         [EmailAddress]

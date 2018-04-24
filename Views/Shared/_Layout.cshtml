@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - dojo_activities</title>
+    <title>@ViewData["Title"] - bright_ideas</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" />
@@ -21,7 +21,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Activity" asp-action="Index" class="navbar-brand">Dojo Activity Center</a>
+                <a asp-area="" asp-controller="Idea" asp-action="Index" class="navbar-brand">Bright Ideas</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -35,10 +35,7 @@
     }
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2018 - dojo_activities</p>
-        </footer>
+
     </div>
 
     <environment include="Development">

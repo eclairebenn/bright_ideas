@@ -1,24 +1,24 @@
 
-@model dojo_activities.Models.RegisterViewModel
+@model bright_ideas.Models.RegisterViewModel
 
 <h3>Register</h3>
 <form asp-controller="User" asp-action="Register" method="post">
     <table class="table" id="borderless">
         <tr>
-            <td><label asp-for="FirstName"></label></td>
-            <td><input asp-for="FirstName"/></td>
+            <td><label asp-for="Name"></label></td>
+            <td><input asp-for="Name"/></td>
         </tr>
         <tr>
             <td></td>
-            <td class="error"><span asp-validation-for="FirstName"></span></td>
+            <td class="error"><span asp-validation-for="Name"></span></td>
         </tr>
         <tr>
-            <td><label asp-for="LastName"></label></td>
-            <td><input asp-for="LastName"/></td>
+            <td><label asp-for="Alias"></label></td>
+            <td><input asp-for="Alias"/></td>
         </tr>
         <tr>
             <td></td>
-            <td class="error"><span asp-validation-for="LastName"></span></td>
+            <td class="error"><span asp-validation-for="Alias"></span></td>
         </tr>
         <tr>
             <td><label asp-for="Email"></label></td>
@@ -34,7 +34,17 @@
         </tr>
         <tr>
             <td></td>
-            <td class="error"><span asp-validation-for="Password"></span></td>
+            <td class="error"><span asp-validation-for="Password"></span>
+                @if(@ViewBag.passErrors != null)
+                {
+                    @foreach(string error in @ViewBag.passErrors)
+                    {
+                       <p>@error</p> 
+                    }
+                    
+                }
+                
+            </td>
         </tr>
         <tr>
             <td><label asp-for="PasswordConf"></label></td>

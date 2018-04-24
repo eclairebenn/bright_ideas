@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace dojo_activities.Models
+namespace bright_ideas.Models
 {
     public class LoginViewModel : BaseEntity
     {
@@ -10,7 +10,7 @@ namespace dojo_activities.Models
         [Display(Name="Email")]
         public string LogEmail {get;set;}
 
-        [Required(ErrorMessage="Invalid Password")]
+        [Required]
         [DataType(DataType.Password)]
         [Display(Name="Password")]
         
