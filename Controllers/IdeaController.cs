@@ -14,12 +14,12 @@ using Microsoft.EntityFrameworkCore;
 namespace dojo_activities.Controllers
 {
     [Authorize]
-    public class ActivityController : Controller
+    public class IdeaController : Controller
     {
         private BeltContext _context;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        public ActivityController(
+        public IdeaController(
             BeltContext context,
             UserManager<User> userManager,
             SignInManager<User> signInManager)
